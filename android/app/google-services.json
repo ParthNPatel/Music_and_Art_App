@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "294084038891",
+    "project_id": "music-and-art-admin-pane-5564c",
+    "storage_bucket": "music-and-art-admin-pane-5564c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:294084038891:android:cd72d0c84e0931fb4b2eae",
+        "android_client_info": {
+          "package_name": "com.example.music_and_art"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "294084038891-028klu8fbu244sos3j70ah67o2i6gi9n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPLfypc2b53Vg3XWC1hY5WbSSGqoTITm4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "294084038891-028klu8fbu244sos3j70ah67o2i6gi9n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
