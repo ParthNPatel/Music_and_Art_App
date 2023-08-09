@@ -24,6 +24,7 @@ class TextFieldLayout extends StatefulWidget {
   final bool needBorder;
   final List<TextInputFormatter>? textInputFormatters;
   final int? maxLength;
+  final String? Function(String?)? validator;
 
   TextFieldLayout(
       {Key? key,
@@ -46,7 +47,8 @@ class TextFieldLayout extends StatefulWidget {
       this.textInputFormatters,
       this.maxLength,
       this.needBorder = false,
-      required this.labelText})
+      required this.labelText,
+      this.validator})
       : super(key: key);
 
   @override
@@ -92,15 +94,17 @@ class _TextFieldLayoutState extends State<TextFieldLayout> {
   }
 
   Widget textField() {
-    return TextField(
+    return TextFormField(
       maxLength: widget.maxLength ?? 1000,
       enabled: widget.enabled,
+
       readOnly: widget.readOnly,
       focusNode: widget.currentNode,
-      onSubmitted: (term) {
-        widget.currentNode?.unfocus();
-        FocusScope.of(context).requestFocus(widget.nextNode ?? null);
-      },
+      validator: widget.validator,
+      // onSubmitted: (term) {
+      //   widget.currentNode?.unfocus();
+      //   FocusScope.of(context).requestFocus(widget.nextNode ?? null);
+      // },
       inputFormatters: widget.needFormatter ? widget.textInputFormatters : null,
       controller: widget.controller,
       onTap: widget.onTap,

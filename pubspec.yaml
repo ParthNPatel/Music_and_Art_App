@@ -48,6 +48,12 @@ dependencies:
   firebase_storage: ^11.0.16
   cloud_firestore: ^4.4.5
 
+  #google Authentication
+  google_sign_in: ^6.1.4
+  http: ^0.13.6
+  flutter_webview_plugin: any
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

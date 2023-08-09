@@ -18,81 +18,125 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenLayout(
-      scaffoldColor: AppColors.transparent,
-      bgImage: AppImages.appBG,
-      needAppBar: false,
-      body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        SizedBox(height: 40.h),
-        AppTextStyle.textBoldWeight400(
-            text: AuthenticationStrings.willkommen,
-            color: AppColors.appYellow,
-            fontSize: 20.sp,
-            needPoppins: false),
-        AppTextStyle.textBoldWeight400(
-            text: AuthenticationStrings.intelligenz,
-            color: AppColors.white,
-            fontSize: 32.sp,
-            needPoppins: false),
-        padding20,
-        TextFieldLayout(
-          hintText: AuthenticationStrings.benutzer_namen_eingeben,
-          labelText: AuthenticationStrings.benutzername,
-        ),
-        padding20,
-        TextFieldLayout(
-          hintText: AuthenticationStrings.hint_mail,
-          labelText: AuthenticationStrings.email,
-        ),
-        padding,
-        TextFieldLayout(
-          hintText: AuthenticationStrings.hint_password,
-          labelText: AuthenticationStrings.passwort_eingeben,
-          isPasswordField: true,
-        ),
-        padding,
-        TextFieldLayout(
-          hintText: AuthenticationStrings.hint_password,
-          labelText: AuthenticationStrings.passwort_erneut_eingeben,
-          isPasswordField: true,
-        ),
-        padding20,
-        CommonButton(
-          text: AuthenticationStrings.anmeldung,
-          onPressed: authViewModel.navigateToInstallationScreen,
-        ),
-        padding20,
-        AppTextStyle.textBoldWeight400(
-            text: AuthenticationStrings.bereits_ein,
-            color: AppColors.white,
-            fontSize: 15.sp),
-        RichText(
-            text: TextSpan(
-                text: AuthenticationStrings.account,
-                style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 15.sp,
-                    fontFamily: 'Poppins'),
-                children: [
-              TextSpan(
-                  text: AuthenticationStrings.einloggen,
-                  style: TextStyle(
-                      color: AppColors.appYellow,
-                      fontSize: 15.sp,
-                      decoration: TextDecoration.underline,
-                      fontFamily: 'Poppins'))
-            ])),
-        padding,
-        InkWell(
-          onTap: () {
-            authViewModel.termsAndConditionBottomSheet(context);
+        scaffoldColor: AppColors.transparent,
+        bgImage: AppImages.appBG,
+        needAppBar: false,
+        body: GetBuilder<AuthViewModel>(
+          builder: (controller) {
+            return Form(
+              key: controller.formKey,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 40.h),
+                    AppTextStyle.textBoldWeight400(
+                        text: AuthenticationStrings.willkommen,
+                        color: AppColors.appYellow,
+                        fontSize: 20.sp,
+                        needPoppins: false),
+                    AppTextStyle.textBoldWeight400(
+                        text: AuthenticationStrings.intelligenz,
+                        color: AppColors.white,
+                        fontSize: 32.sp,
+                        needPoppins: false),
+                    padding20,
+                    TextFieldLayout(
+                      hintText: AuthenticationStrings.benutzer_namen_eingeben,
+                      labelText: AuthenticationStrings.benutzername,
+                      controller: controller.signUserName,
+                      validator: (val) {
+                        if (val!.isEmpty) {
+                          return 'Bitte geben sie einen Benutzernamen ein.';
+                        }
+                        return null;
+                      },
+                    ),
+                    padding20,
+                    TextFieldLayout(
+                      hintText: AuthenticationStrings.hint_mail,
+                      labelText: AuthenticationStrings.email,
+                      controller: controller.signUpEmail,
+                      validator: (val) {
+                        if (val!.isEmpty) {
+                          return 'Bitte geben Sie Ihre E-Mail-Adresse ein.   Email';
+                        } else if (!val.contains('@')) {
+                          return "Bitte eine gültige Email eingeben";
+                        }
+                        return null;
+                      },
+                    ),
+                    padding,
+                    TextFieldLayout(
+                      hintText: AuthenticationStrings.hint_password,
+                      labelText: AuthenticationStrings.passwort_eingeben,
+                      isPasswordField: true,
+                      controller: controller.signPassword,
+                      validator: (val) {
+                        if (val!.isEmpty) {
+                          return 'Bitte Passwort eingeben';
+                        }
+                        return null;
+                      },
+                    ),
+                    padding,
+                    TextFieldLayout(
+                      hintText: AuthenticationStrings.hint_password,
+                      labelText: AuthenticationStrings.passwort_erneut_eingeben,
+                      isPasswordField: true,
+                      validator: (val) {
+                        if (controller.signPassword.text != val) {
+                          return 'Bitte geben Sie dasselbe Passwort ein.';
+                        }
+                        return null;
+                      },
+                    ),
+                    padding20,
+                    controller.setLoading == true
+                        ? Center(
+                            child: CircularProgressIndicator(
+                                color: AppColors.appYellow),
+                          )
+                        : CommonButton(
+                            text: AuthenticationStrings.anmeldung,
+                            onPressed: () {
+                              controller.navigateToInstallationScreen(context);
+                            },
+                          ),
+                    padding20,
+                    AppTextStyle.textBoldWeight400(
+                        text: AuthenticationStrings.bereits_ein,
+                        color: AppColors.white,
+                        fontSize: 15.sp),
+                    RichText(
+                        text: TextSpan(
+                            text: AuthenticationStrings.account,
+                            style: TextStyle(
+                                color: AppColors.white,
+                                fontSize: 15.sp,
+                                fontFamily: 'Poppins'),
+                            children: [
+                          TextSpan(
+                              text: AuthenticationStrings.einloggen,
+                              style: TextStyle(
+                                  color: AppColors.appYellow,
+                                  fontSize: 15.sp,
+                                  decoration: TextDecoration.underline,
+                                  fontFamily: 'Poppins'))
+                        ])),
+                    padding,
+                    InkWell(
+                      onTap: () {
+                        controller.termsAndConditionBottomSheet(context);
+                      },
+                      child: AppTextStyle.textBoldWeight400(
+                          text: AuthenticationStrings.agb,
+                          color: AppColors.white,
+                          fontSize: 15.sp),
+                    )
+                  ]),
+            );
           },
-          child: AppTextStyle.textBoldWeight400(
-              text: AuthenticationStrings.agb,
-              color: AppColors.white,
-              fontSize: 15.sp),
-        )
-      ]),
-    );
+        ));
   }
 
   Widget get padding => SizedBox(height: 10.h);
