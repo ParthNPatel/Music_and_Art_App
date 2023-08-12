@@ -53,6 +53,10 @@ dependencies:
   http: ^0.13.6
   flutter_webview_plugin: any
 
+  #video player
+  appinio_video_player: ^1.2.1
+  video_player: ^2.7.0
+
 
 dev_dependencies:
   flutter_test:
