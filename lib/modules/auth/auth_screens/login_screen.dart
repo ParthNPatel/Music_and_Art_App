@@ -132,15 +132,20 @@ class LoginScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Container(
-                          height: 45.sp,
-                          width: 45.sp,
-                          padding: EdgeInsets.all(8.sp),
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            shape: BoxShape.circle,
+                        GestureDetector(
+                          onTap: () {
+                            controller.facebookAuthMethod();
+                          },
+                          child: Container(
+                            height: 45.sp,
+                            width: 45.sp,
+                            padding: EdgeInsets.all(8.sp),
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Image.asset(AppImages.facebook),
                           ),
-                          child: Image.asset(AppImages.facebook),
                         ),
                         GestureDetector(
                           onTap: () {

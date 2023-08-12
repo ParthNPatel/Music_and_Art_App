@@ -11,6 +11,7 @@ import 'package:path_provider_android/path_provider_android.dart';
 import 'package:google_sign_in_ios/google_sign_in_ios.dart';
 import 'package:path_provider_foundation/path_provider_foundation.dart';
 import 'package:path_provider_linux/path_provider_linux.dart';
+import 'package:facebook_auth_desktop/facebook_auth_desktop.dart';
 import 'package:path_provider_foundation/path_provider_foundation.dart';
 import 'package:path_provider_windows/path_provider_windows.dart';
 
@@ -68,6 +69,15 @@ class _PluginRegistrant {
       }
 
     } else if (Platform.isMacOS) {
+      try {
+        FacebookAuthDesktopPlugin.registerWith();
+      } catch (err) {
+        print(
+          '`facebook_auth_desktop` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
       try {
         PathProviderFoundation.registerWith();
       } catch (err) {
