@@ -1,4 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class VideoLectureViewModel extends GetxController {
@@ -74,4 +75,12 @@ class VideoLectureViewModel extends GetxController {
     isPlaying = !isPlaying;
     update();
   }
+
+  bool isVideo = false;
+  updateVideo(bool val) {
+    isVideo = val;
+    update();
+  }
+
+  initializedVideoPlayer(BuildContext context) {}
 }

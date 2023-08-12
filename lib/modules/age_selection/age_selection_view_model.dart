@@ -14,17 +14,37 @@ class AgeSelectionViewModel extends GetxController {
         ageName: ageGroupList[index]['ageName'],
         categoriesId: ageGroupList[index]['categoriesId']);
     Get.toNamed(Routes.ageContentScreen, arguments: index);
+    getVideoString();
   }
 
   void navigateToVideoLectureScreen(int index) {
-    if (ageContentList[index]['addAudio'] == null ||
-        ageContentList[index]['addAudio'] == '') {
-      videoLectureViewModel.setUrl(
-          'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+    if (getVideo.isNotEmpty) {
+      for (int i = 0; i < getVideo.length; i++) {
+        if (getVideo[i].containsValue(ageContentList[index]['ageId']) &&
+            getVideo[i]
+                .containsValue(ageContentList[index]['ageContentName'])) {
+          print('DATA==${getVideo[i]}');
+          videoLectureViewModel.updateVideo(true);
+          Get.toNamed(Routes.videoLectureScreen, arguments: index);
+        } else {
+          videoLectureViewModel.updateVideo(false);
+          if (ageContentList[index]['addAudio'] == null ||
+              ageContentList[index]['addAudio'] == '') {
+          } else {
+            videoLectureViewModel.setUrl(ageContentList[index]['addAudio']);
+          }
+          Get.toNamed(Routes.videoLectureScreen, arguments: index);
+        }
+      }
     } else {
-      videoLectureViewModel.setUrl(ageContentList[index]['addAudio']);
+      videoLectureViewModel.updateVideo(false);
+      if (ageContentList[index]['addAudio'] == null ||
+          ageContentList[index]['addAudio'] == '') {
+      } else {
+        videoLectureViewModel.setUrl(ageContentList[index]['addAudio']);
+      }
+      Get.toNamed(Routes.videoLectureScreen, arguments: index);
     }
-    Get.toNamed(Routes.videoLectureScreen, arguments: index);
   }
 
   void navigationToProfileScreen() {
@@ -74,10 +94,29 @@ class AgeSelectionViewModel extends GetxController {
         'ageImage': element['ageImage'],
         'ageContentName': element['ageContentName'],
         'addAudio': element['addAudio'],
+        'ageId': element['ageId'],
       });
     });
     setLoadingS(false);
     print('ageContentList::::${ageContentList.length}');
+    update();
+  }
+
+  List<Map<String, dynamic>> getVideo = [];
+  getVideoString() async {
+    var getData = await FirebaseFirestore.instance.collection('video').get();
+    getData.docs.forEach((element) {
+      getVideo.add({
+        'addDataVideo': element['addDataVideo'],
+        'addDataImage': element['addDataImage'],
+        'ageId': element['ageId'],
+        'addAudio': element['addAudio'],
+        'addaDataName': element['addaDataName'],
+        'description': element['description'],
+        'ageContentName': element['ageContentName'],
+      });
+    });
+    print('getVideo::::${getVideo}');
     update();
   }
 }
