@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -29,6 +30,30 @@ class AuthViewModel extends GetxController {
   void setLoadingS(bool val) {
     setLoading = val;
     update();
+  }
+
+  Future facebookAuthMethod() async {
+    try {
+      final result = await FacebookAuth.instance
+          .login(permissions: ['public_profile', 'email']);
+
+      if (result.status == LoginStatus.success) {
+        print('RESPONSE');
+        OAuthCredential facebookAuthCredential =
+            FacebookAuthProvider.credential(result.accessToken!.token);
+        print('RESPONSE1');
+
+        final userData = await FacebookAuth.instance.getUserData();
+
+        print('RESPONSE2');
+
+        try {
+          /// any operation
+        } catch (e) {}
+      }
+    } catch (error) {
+      print('ERRORRRRRR $error');
+    }
   }
 
   void navigateToSignupScreen() {

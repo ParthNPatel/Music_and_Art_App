@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Music and art</string>
+    <string name="facebook_app_id">1097956024501358</string>
+    <string name="fb_login_protocol_scheme">fb1097956024501358</string>
+    <string name="facebook_client_token">159f7fd0d6896dbab86705a0afc47b84</string>
+
+
+</resources>
