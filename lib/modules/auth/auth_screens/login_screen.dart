@@ -5,6 +5,7 @@ import 'package:music_and_art/constants/assets.dart';
 import 'package:music_and_art/constants/colors.dart';
 import 'package:music_and_art/constants/strings.dart';
 import 'package:music_and_art/constants/test_style.dart';
+import 'package:music_and_art/core/routing/routes.dart';
 import 'package:music_and_art/modules/auth/auth_screens/instagram_login_view.dart';
 import 'package:music_and_art/modules/auth/auth_view_models/auth_view_model.dart';
 import 'package:music_and_art/widgets/common_button.dart';
@@ -134,7 +135,15 @@ class LoginScreen extends StatelessWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            controller.facebookAuthMethod();
+                            controller
+                                .facebookAuthMethod(context)
+                                .then((value) {
+                              if (value?.user != null) {
+                                // controller
+                                //     .navigateToInstallationScreen(context);
+                                Get.toNamed(Routes.installationScreen);
+                              } else {}
+                            });
                           },
                           child: Container(
                             height: 45.sp,
