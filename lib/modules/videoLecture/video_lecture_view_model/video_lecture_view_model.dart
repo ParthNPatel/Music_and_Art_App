@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:video_player/video_player.dart';
 
 class VideoLectureViewModel extends GetxController {
   AudioPlayer audioPlayer = AudioPlayer();
@@ -54,6 +55,19 @@ class VideoLectureViewModel extends GetxController {
     update();
   }
 
+  var videoUrl;
+  setVideoUrl(String value) {
+    videoUrl = value;
+    setVideo();
+    update();
+  }
+
+  var videoThumb;
+  setVideoThumb(String value) {
+    videoThumb = value;
+    update();
+  }
+
   Future setAudio() async {
     audioPlayer.setReleaseMode(ReleaseMode.loop);
     audioPlayer.setPlayerMode(PlayerMode.mediaPlayer);
@@ -61,6 +75,47 @@ class VideoLectureViewModel extends GetxController {
     audioPlayer.setSourceUrl(url);
     audioPlayer.play(UrlSource(url));
     isPlaying = true;
+    update();
+  }
+
+  late VideoPlayerController videoController;
+  double sliderValue = 0.0;
+  var position = Duration.zero;
+  var totalVideoDuration = Duration.zero;
+  Future setVideo() async {
+    videoController = VideoPlayerController.networkUrl(Uri.parse('$videoUrl'))
+      ..initialize().then((_) {
+        totalVideoDuration = videoController.value.duration;
+        videoController.play();
+      });
+    onVideoPositionChange();
+    update();
+  }
+
+  void onVideoPositionChange() {
+    videoController.addListener(updateSeeker);
+  }
+
+  getVideoPosition() {
+    var duration = Duration(
+        milliseconds: videoController.value.position.inMilliseconds.round());
+    return [duration.inMinutes, duration.inSeconds]
+        .map((seg) => seg.remainder(60).toString().padLeft(2, '0'))
+        .join(':');
+  }
+
+  String printTotalDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    // return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+    return "$twoDigitMinutes:$twoDigitSeconds";
+  }
+
+  Future<void> updateSeeker() async {
+    final newPosition = await videoController.value.position;
+    position = newPosition;
+    sliderValue = newPosition.inSeconds.toDouble();
     update();
   }
 
@@ -79,6 +134,7 @@ class VideoLectureViewModel extends GetxController {
   bool isVideo = false;
   updateVideo(bool val) {
     isVideo = val;
+    print('IS==${isVideo}');
     update();
   }
 

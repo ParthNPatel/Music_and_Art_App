@@ -1,4 +1,3 @@
-import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,6 +6,7 @@ import 'package:music_and_art/constants/strings.dart';
 import 'package:music_and_art/constants/test_style.dart';
 import 'package:music_and_art/core/routing/routes.dart';
 import 'package:music_and_art/widgets/screen_layout.dart';
+import 'package:video_player/video_player.dart';
 
 import 'video_lecture_view_model/video_lecture_view_model.dart';
 
@@ -27,38 +27,12 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
   //
   // final CustomVideoPlayerSettings _customVideoPlayerSettings =
   //     const CustomVideoPlayerSettings();
-  late VideoPlayerController _controller;
-  double _sliderValue = 0.0;
-  bool _isDragging = false;
+
   @override
   void initState() {
-    // videoLectureViewModel.setAudio();
     if (videoLectureViewModel.isVideo) {
-      _controller = VideoPlayerController.network(
-          'https://firebasestorage.googleapis.com/v0/b/music-and-art-admin-pane-5564c.appspot.com/o/Videos%2Flg-4k-demo-hdr-2018-60fps-elba.mp4?alt=media&token=c10348a9-fec4-4b14-a5d3-5060dbe9d720')
-        ..initialize().then((_) {
-          // Ensure the first frame is shown
-          setState(() {});
-        });
-      _controller.addListener(() {
-        if (!_isDragging) {
-          setState(() {
-            _sliderValue = _controller.value.position.inSeconds.toDouble();
-            print('DATA==${_sliderValue}');
-          });
-        }
-      });
-      // _videoPlayerController = VideoPlayerController.network(
-      //   'https://firebasestorage.googleapis.com/v0/b/music-and-art-admin-pane-5564c.appspot.com/o/Videos%2Flg-4k-demo-hdr-2018-60fps-elba.mp4?alt=media&token=c10348a9-fec4-4b14-a5d3-5060dbe9d720',
-      // )..initialize().then((value) => setState(() {}));
-      //
-      // _customVideoPlayerController = CustomVideoPlayerController(
-      //   context: context,
-      //   videoPlayerController: _videoPlayerController,
-      //   customVideoPlayerSettings: _customVideoPlayerSettings,
-      // );
-      // _customVideoPlayerController!.videoPlayerController.play();
-      // WidgetsBinding.instance.addObserver(this);
+      // videoLectureViewModel.setVideo();
+      // videoLectureViewModel.onVideoPositionChange();
     } else {
       videoLectureViewModel.onAudioDurationChange();
       videoLectureViewModel.onAudioPositionChange();
@@ -66,30 +40,10 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
     super.initState();
   }
 
-  void _onSliderChanged(double value) {
-    setState(() {
-      _sliderValue = value;
-    });
-
-    _controller.seekTo(Duration(seconds: value.toInt()));
-  }
-
-  void _onSliderDragStart() {
-    setState(() {
-      _isDragging = true;
-    });
-  }
-
-  void _onSliderDragEnd() {
-    setState(() {
-      _isDragging = false;
-    });
-  }
-
   @override
   void dispose() {
     videoLectureViewModel.audioPlayer.dispose();
-    _controller.dispose();
+    videoLectureViewModel.videoController.dispose();
     super.dispose();
   }
 
@@ -128,7 +82,7 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 controller.isVideo
-                    ? _controller.value.isInitialized
+                    ? controller.videoController.value.isInitialized
                         ? Container(
                             margin: EdgeInsets.all(20.sp),
                             height: 228.sp,
@@ -139,8 +93,9 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(30.sp),
                               child: AspectRatio(
-                                aspectRatio: _controller.value.aspectRatio,
-                                child: VideoPlayer(_controller),
+                                aspectRatio: controller
+                                    .videoController.value.aspectRatio,
+                                child: VideoPlayer(controller.videoController),
                               ),
                             ),
                           )
@@ -148,11 +103,15 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                             margin: EdgeInsets.all(20.sp),
                             height: 228.sp,
                             width: Get.width,
+                            clipBehavior: Clip.none,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30.sp),
-                            ),
-                            child: Image.asset(
-                              'assets/images/video_lacture_thumb.png',
+                                borderRadius: BorderRadius.circular(30.sp),
+                                image: DecorationImage(
+                                  image: NetworkImage(controller.videoThumb),
+                                )),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                  color: AppColors.appYellow),
                             ),
                           )
                     : Container(
@@ -194,13 +153,19 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                 ),
                 controller.isVideo
                     ? Slider(
-                        // value: _sliderValue,
-                        value: 0.0,
+                        value: controller.sliderValue,
+                        // value: 0.0,
                         min: 0.0,
                         // max: _controller.value.duration.inSeconds.toDouble(),
-                        max: 0.0,
+                        max: controller.totalVideoDuration.inSeconds.toDouble(),
                         // onChanged: _onSliderChanged,
-                        onChanged: (val) {},
+                        onChanged: (double val) async {
+                          final position = Duration(seconds: val.toInt());
+                          await controller.videoController.seekTo(position);
+                          await controller.videoController.play();
+                          controller.videoController
+                              .seekTo(Duration(seconds: val.toInt()));
+                        },
                         // onChangeStart: (_) => _onSliderDragStart(),
                         // onChangeEnd: (_) => _onSliderDragEnd(),
                         // onChanged: _onSliderChanged,
@@ -226,7 +191,25 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                         thumbColor: AppColors.appYellow,
                       ),
                 controller.isVideo
-                    ? SizedBox()
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.sp),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            AppTextStyle.textBoldWeight400(
+                                text: '${controller.getVideoPosition()}',
+                                color: AppColors.black,
+                                fontFamily: 'Poppins',
+                                fontSize: 11.sp),
+                            AppTextStyle.textBoldWeight400(
+                                text:
+                                    '${controller.printTotalDuration(controller.videoController.value.duration)}',
+                                color: AppColors.black,
+                                fontFamily: 'Poppins',
+                                fontSize: 11.sp),
+                          ],
+                        ),
+                      )
                     : Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20.sp),
                         child: Row(
@@ -263,7 +246,12 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                                 size: 24.sp,
                               ),
                               onPressed: () {
-                                controller.cutAudioFromEnd();
+                                setState(() {
+                                  controller.videoController.seekTo(Duration(
+                                      seconds: controller.videoController.value
+                                              .position.inSeconds -
+                                          10));
+                                });
                               },
                             ),
                             IconButton(
@@ -282,20 +270,21 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                                   color: AppColors.audioButtonColor),
                               child: IconButton(
                                 icon: Icon(
-                                  _controller.value.isPlaying
+                                  controller.videoController.value.isPlaying
                                       ? Icons.pause
                                       : Icons.play_arrow,
                                   color: Colors.white,
                                   size: 24.sp,
                                 ),
                                 onPressed: () {
-                                  if (_controller.value.isPlaying) {
+                                  if (controller
+                                      .videoController.value.isPlaying) {
                                     setState(() {
-                                      _controller.pause();
+                                      controller.videoController.pause();
                                     });
                                   } else {
                                     setState(() {
-                                      _controller.play();
+                                      controller.videoController.play();
                                     });
                                   }
                                 },
@@ -316,7 +305,12 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                                 size: 24.sp,
                               ),
                               onPressed: () {
-                                controller.cutAudioFromStart();
+                                setState(() {
+                                  controller.videoController.seekTo(Duration(
+                                      seconds: controller.videoController.value
+                                              .position.inSeconds +
+                                          10));
+                                });
                               },
                             ),
                           ],

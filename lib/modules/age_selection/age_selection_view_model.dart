@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:music_and_art/core/routing/routes.dart';
@@ -25,7 +27,10 @@ class AgeSelectionViewModel extends GetxController {
                 .containsValue(ageContentList[index]['ageContentName'])) {
           print('DATA==${getVideo[i]}');
           videoLectureViewModel.updateVideo(true);
+          videoLectureViewModel.setVideoUrl(getVideo[i]['addDataVideo']);
+          videoLectureViewModel.setVideoThumb(getVideo[i]['addDataImage']);
           Get.toNamed(Routes.videoLectureScreen, arguments: index);
+          break;
         } else {
           videoLectureViewModel.updateVideo(false);
           if (ageContentList[index]['addAudio'] == null ||
@@ -104,6 +109,7 @@ class AgeSelectionViewModel extends GetxController {
 
   List<Map<String, dynamic>> getVideo = [];
   getVideoString() async {
+    getVideo.clear();
     var getData = await FirebaseFirestore.instance.collection('video').get();
     getData.docs.forEach((element) {
       getVideo.add({
@@ -116,7 +122,8 @@ class AgeSelectionViewModel extends GetxController {
         'ageContentName': element['ageContentName'],
       });
     });
-    print('getVideo::::${getVideo}');
+    log('getVideo::::${getVideo}');
+    log('getVideo::::${getVideo.length}');
     update();
   }
 }

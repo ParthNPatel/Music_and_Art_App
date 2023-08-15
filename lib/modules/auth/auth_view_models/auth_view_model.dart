@@ -32,28 +32,13 @@ class AuthViewModel extends GetxController {
     update();
   }
 
-  Future facebookAuthMethod() async {
-    try {
-      final result = await FacebookAuth.instance
-          .login(permissions: ['public_profile', 'email']);
-
-      if (result.status == LoginStatus.success) {
-        print('RESPONSE');
-        OAuthCredential facebookAuthCredential =
-            FacebookAuthProvider.credential(result.accessToken!.token);
-        print('RESPONSE1');
-
-        final userData = await FacebookAuth.instance.getUserData();
-
-        print('RESPONSE2');
-
-        try {
-          /// any operation
-        } catch (e) {}
-      }
-    } catch (error) {
-      print('ERRORRRRRR $error');
-    }
+  Future<UserCredential?> facebookAuthMethod(BuildContext context) async {
+    final LoginResult loginResult = await FacebookAuth.instance.login();
+    final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(loginResult.accessToken!.token);
+    print('RESPONSE1==${facebookAuthCredential}');
+    return await FirebaseAuth.instance
+        .signInWithCredential(facebookAuthCredential);
   }
 
   void navigateToSignupScreen() {

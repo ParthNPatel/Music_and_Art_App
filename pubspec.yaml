@@ -54,7 +54,8 @@ dependencies:
   flutter_webview_plugin: any
 
   #facebook authentication
-  flutter_facebook_auth: ^5.0.10
+  flutter_facebook_auth: ^5.0.9
+  video_player: ^2.7.0
 
 
 dev_dependencies:
