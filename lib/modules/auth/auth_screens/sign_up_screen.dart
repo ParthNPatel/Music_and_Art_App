@@ -15,6 +15,8 @@ class SignUpScreen extends StatelessWidget {
 
   final AuthViewModel authViewModel = Get.put(AuthViewModel());
 
+  final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return ScreenLayout(
@@ -24,7 +26,7 @@ class SignUpScreen extends StatelessWidget {
         body: GetBuilder<AuthViewModel>(
           builder: (controller) {
             return Form(
-              key: controller.formKey,
+              key: formKey,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -99,7 +101,14 @@ class SignUpScreen extends StatelessWidget {
                         : CommonButton(
                             text: AuthenticationStrings.anmeldung,
                             onPressed: () {
-                              controller.navigateToInstallationScreen(context);
+                              if (formKey.currentState!.validate()) {
+                                controller.setLoadingS(true);
+                                controller.signUp(
+                                  email: controller.signUpEmail.text,
+                                  password: controller.signPassword.text,
+                                  context: context,
+                                );
+                              }
                             },
                           ),
                     padding20,

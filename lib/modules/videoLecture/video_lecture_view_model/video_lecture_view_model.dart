@@ -78,27 +78,28 @@ class VideoLectureViewModel extends GetxController {
     update();
   }
 
-  late VideoPlayerController videoController;
+  VideoPlayerController? videoController;
+
   double sliderValue = 0.0;
   var position = Duration.zero;
   var totalVideoDuration = Duration.zero;
   Future setVideo() async {
     videoController = VideoPlayerController.networkUrl(Uri.parse('$videoUrl'))
       ..initialize().then((_) {
-        totalVideoDuration = videoController.value.duration;
-        videoController.play();
+        totalVideoDuration = videoController!.value.duration;
+        videoController!.play();
       });
     onVideoPositionChange();
     update();
   }
 
   void onVideoPositionChange() {
-    videoController.addListener(updateSeeker);
+    videoController!.addListener(updateSeeker);
   }
 
   getVideoPosition() {
     var duration = Duration(
-        milliseconds: videoController.value.position.inMilliseconds.round());
+        milliseconds: videoController!.value.position.inMilliseconds.round());
     return [duration.inMinutes, duration.inSeconds]
         .map((seg) => seg.remainder(60).toString().padLeft(2, '0'))
         .join(':');
@@ -113,7 +114,7 @@ class VideoLectureViewModel extends GetxController {
   }
 
   Future<void> updateSeeker() async {
-    final newPosition = await videoController.value.position;
+    final newPosition = await videoController!.value.position;
     position = newPosition;
     sliderValue = newPosition.inSeconds.toDouble();
     update();
