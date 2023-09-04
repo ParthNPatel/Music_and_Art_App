@@ -12,6 +12,7 @@ import 'package:music_and_art/constants/colors.dart';
 import 'package:music_and_art/constants/strings.dart';
 import 'package:music_and_art/constants/test_style.dart';
 import 'package:music_and_art/core/routing/routes.dart';
+import 'package:music_and_art/services/get_storage_service.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -22,8 +23,6 @@ class AuthViewModel extends GetxController {
   TextEditingController loginPassword = TextEditingController();
   TextEditingController signUserName = TextEditingController();
   TextEditingController signRePassword = TextEditingController();
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
 
   bool setLoading = false;
 
@@ -50,28 +49,28 @@ class AuthViewModel extends GetxController {
   }
 
   void loginWithWithEmail(BuildContext context) {
-    if (loginFormKey.currentState!.validate()) {
-      setLoadingS(true);
-      login(
-          email: loginEmail.text,
-          password: loginPassword.text,
-          context: context);
-
-      update();
-    }
+    // if (loginFormKey.currentState!.validate()) {
+    //   setLoadingS(true);
+    //   login(
+    //       email: loginEmail.text,
+    //       password: loginPassword.text,
+    //       context: context);
+    //
+    //   update();
+    // }
   }
 
   void navigateToInstallationScreen(BuildContext context) {
-    if (formKey.currentState!.validate()) {
-      setLoadingS(true);
-      signUp(
-        email: signUpEmail.text,
-        password: signPassword.text,
-        context: context,
-      );
-
-      update();
-    }
+    // if (formKey.currentState!.validate()) {
+    //   setLoadingS(true);
+    //   signUp(
+    //     email: signUpEmail.text,
+    //     password: signPassword.text,
+    //     context: context,
+    //   );
+    //
+    //   update();
+    // }
   }
 
   bool checkBox1 = false;
@@ -179,11 +178,13 @@ class AuthViewModel extends GetxController {
 
       if (user != null) {
         if (userCredential.additionalUserInfo!.isNewUser) {
-          await _firestore.collection('users').doc(user.uid).set({
-            'username': user.displayName,
-            'uid': user.uid,
-            'profilePhoto': user.photoURL,
-          });
+          // await _firestore.collection('users').doc(user.uid).set({
+          //   'username': user.displayName,
+          //   'uid': user.uid,
+          //   'profilePhoto': user.photoURL,
+          // });
+          GetStorageServices.setUserLoggedIn();
+          Get.offAllNamed(Routes.installationScreen);
         }
         res = true;
       }
@@ -275,7 +276,8 @@ class AuthViewModel extends GetxController {
       setLoadingS(false);
       loginPassword.clear();
       loginEmail.clear();
-      Get.toNamed(Routes.installationScreen);
+      GetStorageServices.setUserLoggedIn();
+      Get.offAllNamed(Routes.installationScreen);
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'network-request-failed') {

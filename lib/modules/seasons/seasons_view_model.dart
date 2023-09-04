@@ -15,7 +15,6 @@ class SeasonsViewModel extends GetxController {
     seasonsList.clear();
     setLoadingS(true);
     var getData = await FirebaseFirestore.instance.collection('category').get();
-
     getData.docs.forEach((element) {
       seasonsList.add({
         'categoriesName': element['categoryName'],

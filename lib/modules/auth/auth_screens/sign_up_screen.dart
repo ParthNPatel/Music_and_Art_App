@@ -10,10 +10,17 @@ import 'package:music_and_art/widgets/common_button.dart';
 import 'package:music_and_art/widgets/screen_layout.dart';
 import 'package:music_and_art/widgets/text_field_layout.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   SignUpScreen({Key? key}) : super(key: key);
 
-  final AuthViewModel authViewModel = Get.put(AuthViewModel());
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  AuthViewModel authViewModel = Get.put(AuthViewModel());
+
+  GlobalKey<FormState> signUoFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +28,11 @@ class SignUpScreen extends StatelessWidget {
         scaffoldColor: AppColors.transparent,
         bgImage: AppImages.appBG,
         needAppBar: false,
-        body: GetBuilder<AuthViewModel>(
-          builder: (controller) {
-            return Form(
-              key: controller.formKey,
-              child: Column(
+        body: Form(
+          key: signUoFormKey,
+          child: GetBuilder<AuthViewModel>(
+            builder: (controller) {
+              return Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(height: 40.h),
@@ -99,7 +106,16 @@ class SignUpScreen extends StatelessWidget {
                         : CommonButton(
                             text: AuthenticationStrings.anmeldung,
                             onPressed: () {
-                              controller.navigateToInstallationScreen(context);
+                              if (signUoFormKey.currentState!.validate()) {
+                                controller.setLoadingS(true);
+                                controller.signUp(
+                                  email: controller.signUpEmail.text,
+                                  password: controller.signPassword.text,
+                                  context: context,
+                                );
+                              }
+
+                              // controller.navigateToInstallationScreen(context);
                             },
                           ),
                     padding20,
@@ -133,12 +149,13 @@ class SignUpScreen extends StatelessWidget {
                           color: AppColors.white,
                           fontSize: 15.sp),
                     )
-                  ]),
-            );
-          },
+                  ]);
+            },
+          ),
         ));
   }
 
   Widget get padding => SizedBox(height: 10.h);
+
   Widget get padding20 => SizedBox(height: 20.h);
 }

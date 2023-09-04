@@ -15,7 +15,14 @@ class AgeSelectionViewModel extends GetxController {
     getAgeContentList(
         ageName: ageGroupList[index]['ageName'],
         categoriesId: ageGroupList[index]['categoriesId']);
-    Get.toNamed(Routes.ageContentScreen, arguments: index);
+    Get.toNamed(Routes.ageContentScreen,
+        arguments: index == 0
+            ? '1-3 jahre'
+            : index == 1
+                ? '3-7 jahre'
+                : index == 2
+                    ? '7-11 jahre'
+                    : ageGroupList[index]['ageName']);
     getVideoString();
   }
 
@@ -68,7 +75,10 @@ class AgeSelectionViewModel extends GetxController {
     setLoadingS(true);
     var getData = await FirebaseFirestore.instance
         .collection('ageGroup')
-        .where('categoriesName', isEqualTo: name)
+        .where(
+          'categoriesName',
+          isEqualTo: name,
+        )
         .get();
 
     getData.docs.forEach((element) {

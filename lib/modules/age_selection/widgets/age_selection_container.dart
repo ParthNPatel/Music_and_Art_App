@@ -17,8 +17,14 @@ class AgeSelectionContainer extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          Image.network(
-            '${ageSelectionViewModel.ageGroupList[index]['ageImage']}',
+          Image.asset(
+            index == 0
+                ? 'assets/images/group_1.png'
+                : index == 1
+                    ? 'assets/images/group_2.png'
+                    : index == 2
+                        ? "assets/images/group_3.png"
+                        : '${ageSelectionViewModel.ageGroupList[index]['ageImage']}',
             fit: BoxFit.fill,
             height: 119.h,
             width: Get.width,

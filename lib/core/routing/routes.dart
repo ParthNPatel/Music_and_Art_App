@@ -98,8 +98,8 @@ final getRoute = [
     name: Routes.ageContentScreen,
     transition: Transition.native,
     page: () {
-      final args = Get.arguments as int;
-      return AgeContentScreen(index: args);
+      final args = Get.arguments;
+      return AgeContentScreen(ageGroup: args);
     },
   ),
 ];

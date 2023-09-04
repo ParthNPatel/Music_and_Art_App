@@ -18,6 +18,7 @@ class ProfileViewModel extends GetxController {
     ProfileScreenString.thema,
     ProfileScreenString.meinProfil,
     ProfileScreenString.sprache,
-    ProfileScreenString.musikStore
+    ProfileScreenString.musikStore,
+    ProfileScreenString.ausloggen
   ];
 }

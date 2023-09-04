@@ -42,8 +42,11 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
 
   @override
   void dispose() {
+    if (videoLectureViewModel.isVideo) {
+      videoLectureViewModel.videoController.dispose();
+    }
     videoLectureViewModel.audioPlayer.dispose();
-    videoLectureViewModel.videoController.dispose();
+
     super.dispose();
   }
 

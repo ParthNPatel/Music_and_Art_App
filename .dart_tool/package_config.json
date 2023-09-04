@@ -398,6 +398,12 @@
       "languageVersion": "2.15"
     },
     {
+      "name": "get_storage",
+      "rootUri": "file:///Users/mac/.pub-cache/hosted/pub.dev/get_storage-2.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
       "name": "glob",
       "rootUri": "file:///Users/mac/.pub-cache/hosted/pub.dev/glob-2.1.2",
       "packageUri": "lib/",
@@ -812,7 +818,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-08-14T04:17:25.399008Z",
+  "generated": "2023-08-16T09:56:43.456221Z",
   "generator": "pub",
   "generatorVersion": "3.0.5"
 }

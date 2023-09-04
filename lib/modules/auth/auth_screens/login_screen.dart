@@ -16,7 +16,7 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
 
   final AuthViewModel authViewModel = Get.find();
-
+  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return ScreenLayout(
@@ -26,7 +26,7 @@ class LoginScreen extends StatelessWidget {
         body: GetBuilder<AuthViewModel>(
           builder: (controller) {
             return Form(
-              key: controller.loginFormKey,
+              key: loginFormKey,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -84,6 +84,13 @@ class LoginScreen extends StatelessWidget {
                         : CommonButton(
                             text: AuthenticationStrings.einloggen,
                             onPressed: () {
+                              if (loginFormKey.currentState!.validate()) {
+                                controller.setLoadingS(true);
+                                controller.login(
+                                    email: controller.loginEmail.text,
+                                    password: controller.loginPassword.text,
+                                    context: context);
+                              }
                               controller.loginWithWithEmail(context);
                             },
                           ),
@@ -141,7 +148,7 @@ class LoginScreen extends StatelessWidget {
                               if (value?.user != null) {
                                 // controller
                                 //     .navigateToInstallationScreen(context);
-                                Get.toNamed(Routes.installationScreen);
+                                Get.offAllNamed(Routes.installationScreen);
                               } else {}
                             });
                           },

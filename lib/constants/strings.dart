@@ -52,6 +52,7 @@ class ProfileScreenString {
   static const String meinProfil = "Mein Profil";
   static const String sprache = "Sprache";
   static const String musikStore = "Musik Store";
+  static const String ausloggen = "Ausloggen";
 }
 
 class ProfileOptionString {
