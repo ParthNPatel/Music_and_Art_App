@@ -107,12 +107,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             text: AuthenticationStrings.anmeldung,
                             onPressed: () {
                               if (signUoFormKey.currentState!.validate()) {
-                                controller.setLoadingS(true);
-                                controller.signUp(
-                                  email: controller.signUpEmail.text,
-                                  password: controller.signPassword.text,
-                                  context: context,
-                                );
+                                if (controller.checkBox1 &&
+                                    controller.checkBox2) {
+                                  controller.setLoadingS(true);
+                                  controller.signUp(
+                                    email: controller.signUpEmail.text,
+                                    password: controller.signPassword.text,
+                                    context: context,
+                                  );
+                                } else {
+                                  Get.showSnackbar(GetSnackBar(
+                                    title: AuthenticationStrings.terms,
+                                    message:
+                                        AuthenticationStrings.terms_message,
+                                    duration: Duration(seconds: 2),
+                                    backgroundColor: Colors.red.shade400,
+                                  ));
+                                }
                               }
 
                               // controller.navigateToInstallationScreen(context);

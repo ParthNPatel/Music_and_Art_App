@@ -72,7 +72,7 @@ class VideoLectureViewModel extends GetxController {
     audioPlayer.setReleaseMode(ReleaseMode.loop);
     audioPlayer.setPlayerMode(PlayerMode.mediaPlayer);
     String url = audioUrl;
-    audioPlayer.setSourceUrl(url);
+    await audioPlayer.setSourceUrl(url);
     audioPlayer.play(UrlSource(url));
     isPlaying = true;
     update();

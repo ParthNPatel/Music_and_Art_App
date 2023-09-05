@@ -30,6 +30,9 @@ class AuthenticationStrings {
   static const String benutzer_namen_eingeben = "Benutzer Namen eingeben";
   static const String passwort_eingeben = "Passwort eingeben";
   static const String bereits_ein = "Du hast bereits ein";
+  static const String terms = "Geschäftsbedingungen";
+  static const String terms_message =
+      "Bitte akzeptieren Sie alle Geschäftsbedingungen";
   static const String passwort_erneut_eingeben = "Passwort erneut eingeben";
   static const String account = "Account? ";
   static const String agb = "AGB´s & Datenschutz";
