@@ -43,7 +43,7 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
   @override
   void dispose() {
     if (videoLectureViewModel.isVideo) {
-      videoLectureViewModel.videoController.dispose();
+      videoLectureViewModel.videoController?.dispose();
     }
     videoLectureViewModel.audioPlayer.dispose();
 
@@ -85,7 +85,7 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 controller.isVideo
-                    ? controller.videoController.value.isInitialized
+                    ? controller.videoController!.value.isInitialized
                         ? Container(
                             margin: EdgeInsets.all(20.sp),
                             height: 228.sp,
@@ -97,8 +97,8 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                               borderRadius: BorderRadius.circular(30.sp),
                               child: AspectRatio(
                                 aspectRatio: controller
-                                    .videoController.value.aspectRatio,
-                                child: VideoPlayer(controller.videoController),
+                                    .videoController!.value.aspectRatio,
+                                child: VideoPlayer(controller.videoController!),
                               ),
                             ),
                           )
@@ -164,9 +164,9 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                         // onChanged: _onSliderChanged,
                         onChanged: (double val) async {
                           final position = Duration(seconds: val.toInt());
-                          await controller.videoController.seekTo(position);
-                          await controller.videoController.play();
-                          controller.videoController
+                          await controller.videoController!.seekTo(position);
+                          await controller.videoController!.play();
+                          controller.videoController!
                               .seekTo(Duration(seconds: val.toInt()));
                         },
                         // onChangeStart: (_) => _onSliderDragStart(),
@@ -206,7 +206,7 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                                 fontSize: 11.sp),
                             AppTextStyle.textBoldWeight400(
                                 text:
-                                    '${controller.printTotalDuration(controller.videoController.value.duration)}',
+                                    '${controller.printTotalDuration(controller.videoController!.value.duration)}',
                                 color: AppColors.black,
                                 fontFamily: 'Poppins',
                                 fontSize: 11.sp),
@@ -250,8 +250,8 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                               ),
                               onPressed: () {
                                 setState(() {
-                                  controller.videoController.seekTo(Duration(
-                                      seconds: controller.videoController.value
+                                  controller.videoController!.seekTo(Duration(
+                                      seconds: controller.videoController!.value
                                               .position.inSeconds -
                                           10));
                                 });
@@ -273,7 +273,7 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                                   color: AppColors.audioButtonColor),
                               child: IconButton(
                                 icon: Icon(
-                                  controller.videoController.value.isPlaying
+                                  controller.videoController!.value.isPlaying
                                       ? Icons.pause
                                       : Icons.play_arrow,
                                   color: Colors.white,
@@ -281,13 +281,13 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                                 ),
                                 onPressed: () {
                                   if (controller
-                                      .videoController.value.isPlaying) {
+                                      .videoController!.value.isPlaying) {
                                     setState(() {
-                                      controller.videoController.pause();
+                                      controller.videoController!.pause();
                                     });
                                   } else {
                                     setState(() {
-                                      controller.videoController.play();
+                                      controller.videoController!.play();
                                     });
                                   }
                                 },
@@ -309,8 +309,8 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                               ),
                               onPressed: () {
                                 setState(() {
-                                  controller.videoController.seekTo(Duration(
-                                      seconds: controller.videoController.value
+                                  controller.videoController!.seekTo(Duration(
+                                      seconds: controller.videoController!.value
                                               .position.inSeconds +
                                           10));
                                 });
