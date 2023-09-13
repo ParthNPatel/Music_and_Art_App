@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -5,6 +6,7 @@ import 'package:music_and_art/constants/assets.dart';
 import 'package:music_and_art/constants/colors.dart';
 import 'package:music_and_art/constants/strings.dart';
 import 'package:music_and_art/constants/test_style.dart';
+import 'package:music_and_art/core/routing/routes.dart';
 import 'package:music_and_art/modules/auth/auth_view_models/auth_view_model.dart';
 import 'package:music_and_art/widgets/common_button.dart';
 import 'package:music_and_art/widgets/screen_layout.dart';
@@ -144,6 +146,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             children: [
                           TextSpan(
                               text: AuthenticationStrings.einloggen,
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Get.offAllNamed(Routes.loginScreen);
+                                },
                               style: TextStyle(
                                   color: AppColors.appYellow,
                                   fontSize: 15.sp,

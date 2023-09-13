@@ -5,11 +5,14 @@ import 'package:music_and_art/constants/colors.dart';
 import 'package:music_and_art/constants/strings.dart';
 import 'package:music_and_art/constants/test_style.dart';
 import 'package:music_and_art/core/routing/routes.dart';
+import 'package:music_and_art/modules/auth/auth_view_models/auth_view_model.dart';
 import 'package:music_and_art/modules/profile/profile_view_model/profile_view_model.dart';
+import 'package:music_and_art/services/get_storage_service.dart';
 
 class ProfileOptionScreen extends StatelessWidget {
   ProfileOptionScreen({Key? key}) : super(key: key);
   final ProfileViewModel profileViewModel = Get.find();
+  final AuthViewModel authViewModel = Get.find();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +35,7 @@ class ProfileOptionScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: 50,
+                        height: 30,
                       ),
                       IconButton(
                           onPressed: () {
@@ -93,10 +96,14 @@ class ProfileOptionScreen extends StatelessWidget {
                               padding: EdgeInsets.all(0),
                               itemBuilder: (BuildContext context, int index) {
                                 return ListTile(
-                                  onTap: () {
+                                  onTap: () async {
                                     if (index == 1) {
-                                      print('OK');
                                       Get.toNamed(Routes.membershipPlanScreen);
+                                    } else if (index == 2) {
+                                      controller.deleteUserDialog(context);
+                                    } else if (index == 3) {
+                                      GetStorageServices.logOut();
+                                      authViewModel.signOut();
                                     }
                                   },
                                   title: AppTextStyle.textBoldWeight400(
@@ -116,11 +123,16 @@ class ProfileOptionScreen extends StatelessWidget {
                             SizedBox(
                               width: 8.sp,
                             ),
-                            AppTextStyle.textBoldWeight400(
-                                text: ProfileOptionString.impressum,
-                                color: AppColors.white,
-                                fontFamily: 'Poppins',
-                                fontSize: 13.sp),
+                            InkWell(
+                              onTap: () {
+                                Get.toNamed(Routes.termsAndConditionScreen);
+                              },
+                              child: AppTextStyle.textBoldWeight400(
+                                  text: ProfileOptionString.impressum,
+                                  color: AppColors.white,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 13.sp),
+                            )
                           ],
                         ),
                       ),

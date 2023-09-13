@@ -8,6 +8,7 @@ import 'package:music_and_art/modules/membershipPlan/membership_plan_screen.dart
 import 'package:music_and_art/modules/profile/profile_option_screen.dart';
 import 'package:music_and_art/modules/profile/profile_screen.dart';
 import 'package:music_and_art/modules/seasons/seasons_screen.dart';
+import 'package:music_and_art/modules/termAndConditions/terms_and_condition_screen.dart';
 import 'package:music_and_art/modules/videoLecture/video_lecture_screen.dart';
 
 class Routes {
@@ -21,6 +22,7 @@ class Routes {
   static const String seasonsScreen = "/seasonsScreen";
   static const String ageGroupScreen = "/ageGroupScreen";
   static const String ageContentScreen = "/ageContentScreen";
+  static const String termsAndConditionScreen = "/termsAndConditionScreen";
 }
 
 final getRoute = [
@@ -100,6 +102,15 @@ final getRoute = [
     page: () {
       final args = Get.arguments;
       return AgeContentScreen(ageGroup: args);
+    },
+  ),
+
+  ///Terms And Condition Screen
+  GetPage(
+    name: Routes.termsAndConditionScreen,
+    transition: Transition.native,
+    page: () {
+      return TermsAndConditionScreen();
     },
   ),
 ];

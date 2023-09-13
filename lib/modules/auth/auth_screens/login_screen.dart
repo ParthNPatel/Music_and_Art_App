@@ -69,12 +69,18 @@ class LoginScreen extends StatelessWidget {
                       },
                     ),
                     padding20,
-                    Align(
-                        alignment: Alignment.centerRight,
-                        child: AppTextStyle.textBoldWeight400(
-                            text: AuthenticationStrings.forget_password,
-                            color: AppColors.appYellow,
-                            fontSize: 15.sp)),
+                    InkWell(
+                      onTap: () {
+                        controller.forgetPassWord.clear();
+                        controller.forgetPasswordAlertBox(context);
+                      },
+                      child: Align(
+                          alignment: Alignment.centerRight,
+                          child: AppTextStyle.textBoldWeight400(
+                              text: AuthenticationStrings.forget_password,
+                              color: AppColors.appYellow,
+                              fontSize: 15.sp)),
+                    ),
                     padding20,
                     controller.setLoading == true
                         ? Center(
@@ -91,7 +97,6 @@ class LoginScreen extends StatelessWidget {
                                     password: controller.loginPassword.text,
                                     context: context);
                               }
-                              controller.loginWithWithEmail(context);
                             },
                           ),
                     padding20,

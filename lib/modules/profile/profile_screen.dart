@@ -6,7 +6,6 @@ import 'package:music_and_art/constants/strings.dart';
 import 'package:music_and_art/constants/test_style.dart';
 import 'package:music_and_art/core/routing/routes.dart';
 import 'package:music_and_art/modules/auth/auth_view_models/auth_view_model.dart';
-import 'package:music_and_art/services/get_storage_service.dart';
 
 import 'profile_view_model/profile_view_model.dart';
 
@@ -91,10 +90,8 @@ class ProfileScreen extends StatelessWidget {
                               selected: controller.isSelect == index,
                               onTap: () {
                                 controller.updateIsSelected(index);
-                                Get.toNamed(Routes.profileOptionScreen);
-                                if (index == 4) {
-                                  GetStorageServices.logOut();
-                                  authViewModel.signOut();
+                                if (index == 1) {
+                                  Get.toNamed(Routes.profileOptionScreen);
                                 }
                               },
                               title: AppTextStyle.textBoldWeight400(

@@ -23,6 +23,9 @@ class AuthViewModel extends GetxController {
   TextEditingController loginPassword = TextEditingController();
   TextEditingController signUserName = TextEditingController();
   TextEditingController signRePassword = TextEditingController();
+  TextEditingController forgetPassWord = TextEditingController();
+
+  final GlobalKey<FormState> forgetFormKey = GlobalKey<FormState>();
 
   bool setLoading = false;
 
@@ -40,37 +43,72 @@ class AuthViewModel extends GetxController {
         .signInWithCredential(facebookAuthCredential);
   }
 
+  resetPassword({required String email, BuildContext? context}) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email).then((value) => {});
+      Get.back();
+      setLoadingS(false);
+      final SnackBar snackBar = SnackBar(
+        content: Text(
+          "Link „Passwort vergessen“ an E-Mail senden",
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: AppColors.appYellow,
+      );
+      ScaffoldMessenger.of(context!).showSnackBar(snackBar);
+      return true;
+    } on FirebaseAuthException catch (e) {
+      Get.back();
+      if (e.code == 'network-request-failed') {
+        print('ERROR CREATE ON SIGN IN TIME == No Internet Connection.');
+
+        showSnackBar(context: context!, title: "Keine Internetverbindung.");
+      } else if (e.code == 'too-many-requests') {
+        print(
+            'ERROR CREATE ON SIGN IN TIME == Too many attempts please try later');
+        showSnackBar(
+            context: context!,
+            title: "Zu viele Versuche, bitte versuchen Sie es später.");
+      } else if (e.code == 'user-not-found') {
+        print('ERROR CREATE ON SIGN IN TIME == No user found for that email.');
+
+        showSnackBar(
+            context: context!,
+            title: "Für diese E-Mail wurde kein Benutzer gefunden.");
+      } else if (e.code == 'wrong-password') {
+        print(
+            'ERROR CREATE ON SIGN IN TIME == The password is invalid for the given email.');
+        showSnackBar(
+            context: context!,
+            title: "Das Passwort ist für die angegebene E-Mail ungültig.");
+      } else if (e.code == 'invalid-email') {
+        print(
+            'ERROR CREATE ON SIGN IN TIME == The email address is not valid.');
+        showSnackBar(
+            context: context!, title: "Die E-Mail-adresse ist nicht gültig.");
+      } else if (e.code == 'user-disabled') {
+        print(
+            'ERROR CREATE ON SIGN IN TIME ==  The user corresponding to the given email has been disabled.');
+        showSnackBar(
+            context: context!,
+            title:
+                "Der Benutzer, der der angegebenen E-Mail-Adresse entspricht, wurde deaktiviert.");
+      } else {
+        print('ERROR CREATE ON SIGN IN TIME ==  Something went to Wrong.');
+        showSnackBar(context: context!, title: "Etwas ist schief gelaufen.");
+      }
+      setLoadingS(false);
+      return false;
+    }
+  }
+
   void navigateToSignupScreen() {
     Get.toNamed(Routes.signUpScreen);
   }
 
   void navigateToLoginScreen() {
     Get.toNamed(Routes.loginScreen);
-  }
-
-  void loginWithWithEmail(BuildContext context) {
-    // if (loginFormKey.currentState!.validate()) {
-    //   setLoadingS(true);
-    //   login(
-    //       email: loginEmail.text,
-    //       password: loginPassword.text,
-    //       context: context);
-    //
-    //   update();
-    // }
-  }
-
-  void navigateToInstallationScreen(BuildContext context) {
-    // if (formKey.currentState!.validate()) {
-    //   setLoadingS(true);
-    //   signUp(
-    //     email: signUpEmail.text,
-    //     password: signPassword.text,
-    //     context: context,
-    //   );
-    //
-    //   update();
-    // }
   }
 
   bool checkBox1 = false;
@@ -148,6 +186,139 @@ class AuthViewModel extends GetxController {
           },
         ),
       ),
+    );
+  }
+
+  void forgetPasswordAlertBox(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+            contentPadding: EdgeInsets.all(0),
+            content: GetBuilder<AuthViewModel>(
+              builder: (controller) {
+                return Container(
+                  width: Get.width,
+                  decoration: BoxDecoration(),
+                  padding: EdgeInsets.all(10),
+                  child: Form(
+                    key: forgetFormKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            AppTextStyle.textBoldWeight400(
+                                text: AuthenticationStrings.forget_password,
+                                color: AppColors.yellowTextColor,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 20.sp),
+                            InkWell(
+                                onTap: () {
+                                  Get.back();
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        color: AppColors.yellowTextColor),
+                                  ),
+                                  child: Icon(
+                                    Icons.close,
+                                    color: AppColors.yellowTextColor,
+                                  ),
+                                ))
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextFormField(
+                          cursorColor: AppColors.yellowTextColor,
+                          controller: controller.forgetPassWord,
+                          validator: (val) {
+                            if (val!.isEmpty) {
+                              return 'Bitte geben Sie Ihre E-Mail-Adresse ein.   Email';
+                            } else if (!val.contains('@')) {
+                              return "Bitte eine gültige Email eingeben";
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            counterText: '',
+                            disabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppColors.yellowTextColor)),
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppColors.yellowTextColor)),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppColors.yellowTextColor)),
+                            hintText: AuthenticationStrings.hint_mail,
+                            hintStyle: TextStyle(
+                                color: AppColors.yellowTextColor,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 15.sp),
+                            labelText: AuthenticationStrings.email,
+                            labelStyle: TextStyle(
+                                color: AppColors.yellowTextColor,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 20.sp),
+                            contentPadding: EdgeInsets.fromLTRB(
+                              15.w,
+                              11.h,
+                              8.w,
+                              15.h,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        controller.setLoading == true
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                    color: AppColors.appYellow),
+                              )
+                            : InkWell(
+                                onTap: () {
+                                  if (controller.forgetFormKey.currentState!
+                                      .validate()) {
+                                    controller.setLoadingS(true);
+
+                                    controller.resetPassword(
+                                        email: forgetPassWord.text,
+                                        context: context);
+                                  }
+                                },
+                                child: Container(
+                                    height: 40,
+                                    width: Get.width,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: AppColors.appYellow),
+                                    child: Center(
+                                      child: AppTextStyle.textBoldWeight400(
+                                          text: 'vergessen',
+                                          color: AppColors.yellowTextColor,
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 15.sp),
+                                    )),
+                              ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ));
+      },
     );
   }
 
@@ -231,36 +402,37 @@ class AuthViewModel extends GetxController {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'network-request-failed') {
         print('ERROR CREATE ON SIGN UP TIME == No Internet Connection.');
-        showSnackBar(context: context, title: "No Internet Connection.");
+        showSnackBar(context: context, title: "Keine Internetverbindung.");
       } else if (e.code == 'too-many-requests') {
         print(
             'ERROR CREATE ON SIGN UP TIME == Too many attempts please try later');
         showSnackBar(
-            context: context, title: "Too many attempts please try later.");
+            context: context,
+            title: "Zu viele Versuche, bitte versuchen Sie es später.");
       } else if (e.code == 'weak-password') {
         print(
             'ERROR CREATE ON SIGN UP TIME == The password provided is too weak.');
         showSnackBar(
-            context: context, title: "The password provided is too weak.");
+            context: context, title: "Das angegebene Passwort ist zu schwach.");
       } else if (e.code == 'email-already-in-use') {
         print(
             'ERROR CREATE ON SIGN UP TIME == The account already exists for that email.');
         showSnackBar(
             context: context,
-            title: "The account already exists for that email.");
+            title: "Das Konto für diese E-Mail existiert bereits.");
       } else if (e.code == 'invalid-email') {
         print(
             'ERROR CREATE ON SIGN UP TIME == The email address is not valid.');
         showSnackBar(
-            context: context, title: "The email address is not valid.");
+            context: context, title: "Die E-Mail-adresse ist nicht gültig.");
       } else if (e.code == 'weak-password') {
         print(
             'ERROR CREATE ON SIGN UP TIME == The password is not strong enough.');
         showSnackBar(
-            context: context, title: "The password is not strong enough.");
+            context: context, title: "Das Passwort ist nicht sicher genug.");
       } else {
         print('ERROR CREATE ON SIGN IN TIME ==  Something went to Wrong.');
-        showSnackBar(context: context, title: "Something went to wrong.");
+        showSnackBar(context: context, title: "Etwas ist schief gelaufen.");
       }
       setLoadingS(false);
       return false;
@@ -283,37 +455,40 @@ class AuthViewModel extends GetxController {
       if (e.code == 'network-request-failed') {
         print('ERROR CREATE ON SIGN IN TIME == No Internet Connection.');
 
-        showSnackBar(context: context, title: "No Internet Connection.");
+        showSnackBar(context: context, title: "Keine Internetverbindung.");
       } else if (e.code == 'too-many-requests') {
         print(
             'ERROR CREATE ON SIGN IN TIME == Too many attempts please try later');
         showSnackBar(
-            context: context, title: "Too many attempts please try later.");
+            context: context,
+            title: "Zu viele Versuche, bitte versuchen Sie es später.");
       } else if (e.code == 'user-not-found') {
         print('ERROR CREATE ON SIGN IN TIME == No user found for that email.');
 
-        showSnackBar(context: context, title: "No user found for that email.");
+        showSnackBar(
+            context: context,
+            title: "Für diese E-Mail wurde kein Benutzer gefunden.");
       } else if (e.code == 'wrong-password') {
         print(
             'ERROR CREATE ON SIGN IN TIME == The password is invalid for the given email.');
         showSnackBar(
             context: context,
-            title: "The password is invalid for the given email.");
+            title: "Das Passwort ist für die angegebene E-Mail ungültig.");
       } else if (e.code == 'invalid-email') {
         print(
             'ERROR CREATE ON SIGN IN TIME == The email address is not valid.');
         showSnackBar(
-            context: context, title: "The email address is not valid.");
+            context: context, title: "Die E-Mail-adresse ist nicht gültig.");
       } else if (e.code == 'user-disabled') {
         print(
             'ERROR CREATE ON SIGN IN TIME ==  The user corresponding to the given email has been disabled.');
         showSnackBar(
             context: context,
             title:
-                "The user corresponding to the given email has been disabled.");
+                "Der Benutzer, der der angegebenen E-Mail-Adresse entspricht, wurde deaktiviert.");
       } else {
         print('ERROR CREATE ON SIGN IN TIME ==  Something went to Wrong.');
-        showSnackBar(context: context, title: "Something went to wrong.");
+        showSnackBar(context: context, title: "Etwas ist schief gelaufen.");
       }
       setLoadingS(false);
       return false;

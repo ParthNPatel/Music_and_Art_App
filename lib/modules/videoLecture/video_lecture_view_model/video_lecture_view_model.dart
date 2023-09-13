@@ -12,6 +12,12 @@ class VideoLectureViewModel extends GetxController {
 
   bool isPlaying = false;
 
+  bool isFavourite = false;
+  setFavourite() {
+    isFavourite = !isFavourite;
+    update();
+  }
+
   void onAudioDurationChange() {
     print('DURATION=1 =${totalDuration}');
     audioPlayer.onDurationChanged.listen((Duration duration) {

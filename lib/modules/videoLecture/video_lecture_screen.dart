@@ -134,12 +134,16 @@ class _VideoLectureScreenState extends State<VideoLectureScreen>
                           fontFamily: 'Poppins',
                           fontSize: 26.sp),
                       IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                            size: 24.sp,
-                          ))
+                          onPressed: () {
+                            controller.setFavourite();
+                          },
+                          icon: controller.isFavourite
+                              ? Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                  size: 24.sp,
+                                )
+                              : Icon(Icons.favorite_border))
                     ],
                   ),
                 ),

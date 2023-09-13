@@ -32,7 +32,7 @@ class AgeSelectionViewModel extends GetxController {
         if (getVideo[i].containsValue(ageContentList[index]['ageId']) &&
             getVideo[i]
                 .containsValue(ageContentList[index]['ageContentName'])) {
-          print('DATA==${getVideo[i]}');
+          print('DATA==${getVideo[i]['addDataVideo']}');
           videoLectureViewModel.updateVideo(true);
           videoLectureViewModel.setVideoUrl(getVideo[i]['addDataVideo']);
           videoLectureViewModel.setVideoThumb(getVideo[i]['addDataImage']);
